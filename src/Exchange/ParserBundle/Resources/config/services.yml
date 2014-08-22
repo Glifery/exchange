@@ -1,0 +1,11 @@
+parameters:
+    exchange_parser.exchange_rate_parser.class: Exchange\ParserBundle\Service\ExchangeRateParser
+    exchange_parser.parser.sel_by.class: Exchange\ParserBundle\Parser\SelByParser
+
+services:
+    exchange_parser.parser.sel_by:
+        class: %exchange_parser.parser.sel_by.class%
+
+    exchange_parser.exchange_rate_parser:
+        class: %exchange_parser.exchange_rate_parser.class%
+        arguments: [@exchange_parser.parser.sel_by]

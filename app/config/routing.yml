@@ -1,0 +1,4 @@
+exchange_parser:
+    resource: "@ExchangeParserBundle/Resources/config/routing.yml"
+    prefix:   /
+

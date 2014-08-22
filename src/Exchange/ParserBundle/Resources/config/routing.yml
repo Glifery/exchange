@@ -1,0 +1,3 @@
+exchange_parser_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: ExchangeParserBundle:Default:index }
