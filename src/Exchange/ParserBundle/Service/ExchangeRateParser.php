@@ -11,7 +11,7 @@ class ExchangeRateParser
 
     private $currencyMap = array(
         array(
-            "CODE" => "USD_H",
+            "DIRECTION" => "USD_H",
             "NAME" => "Продажа USD",
             "SORT" => "MIN",
             "INDEX" => 2,
@@ -19,35 +19,35 @@ class ExchangeRateParser
             "DEFAULT" => true
         ),
         array(
-            "CODE" => "EUR_H",
+            "DIRECTION" => "EUR_H",
             "NAME" => "Продажа EUR",
             "SORT" => "MIN",
             "INDEX" => 4,
             "STEP" => 10,
         ),
         array(
-            "CODE" => "RUB_H",
+            "DIRECTION" => "RUB_H",
             "NAME" => "Продажа RUB",
             "SORT" => "MIN",
             "INDEX" => 6,
             "STEP" => 1,
         ),
         array(
-            "CODE" => "USD_L",
+            "DIRECTION" => "USD_L",
             "NAME" => "Покупка USD",
             "SORT" => "MAX",
             "INDEX" => 1,
             "STEP" => 10,
         ),
         array(
-            "CODE" => "EUR_L",
+            "DIRECTION" => "EUR_L",
             "NAME" => "Покупка EUR",
             "SORT" => "MAX",
             "INDEX" => 3,
             "STEP" => 10,
         ),
         array(
-            "CODE" => "RUB_L",
+            "DIRECTION" => "RUB_L",
             "NAME" => "Покупка RUB",
             "SORT" => "MAX",
             "INDEX" => 5,
