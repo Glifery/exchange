@@ -2,6 +2,7 @@
 
 namespace Exchange\ParserBundle\Parser;
 
+use Exchange\ParserBundle\RawData\RawData;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -11,53 +12,25 @@ class SelByParser implements ParserInterface
 
     const EXPAND_CLASS = 'expand-child';
 
-    private function getCurrencyMap()
+    /** @var array */
+    private $currencyMap;
+
+    /** @var string */
+    private $bankNameIterator;
+
+    /** @var array */
+    private $currencies = array();
+
+    private function getDirectionByIndex($index)
     {
-        return array(
-            array(
-                "CODE" => "USD_H",
-                "NAME" => "Продажа USD",
-                "SORT" => "MIN",
-                "INDEX" => 2,
-                "STEP" => 10,
-                "DEFAULT" => true
-            ),
-            array(
-                "CODE" => "EUR_H",
-                "NAME" => "Продажа EUR",
-                "SORT" => "MIN",
-                "INDEX" => 4,
-                "STEP" => 10,
-            ),
-            array(
-                "CODE" => "RUB_H",
-                "NAME" => "Продажа RUB",
-                "SORT" => "MIN",
-                "INDEX" => 6,
-                "STEP" => 1,
-            ),
-            array(
-                "CODE" => "USD_L",
-                "NAME" => "Покупка USD",
-                "SORT" => "MAX",
-                "INDEX" => 1,
-                "STEP" => 10,
-            ),
-            array(
-                "CODE" => "EUR_L",
-                "NAME" => "Покупка EUR",
-                "SORT" => "MAX",
-                "INDEX" => 3,
-                "STEP" => 10,
-            ),
-            array(
-                "CODE" => "RUB_L",
-                "NAME" => "Покупка RUB",
-                "SORT" => "MAX",
-                "INDEX" => 5,
-                "STEP" => 1,
-            ),
-        );
+        foreach ($this->currencyMap as $currency)
+        {
+            if ($currency['INDEX'] == $index) {
+                return $currency['CODE'];
+            }
+        }
+
+        return null;
     }
 
     private function getTargetHtml($url)
@@ -71,16 +44,18 @@ class SelByParser implements ParserInterface
         return $html;
     }
 
-    private function handleTableCell(Crawler $row)
+    private function handleCurrencyCell(Crawler $row, $position)
     {
-        $row = $row;
+        $arCurrency = $this->getCurrencyMap();
 
-        $arCols = $row->find("td");
+        $value = $row->text();
+
+        $arCols = $row->filter("td");
         preg_match("/- ([^,]*),.*/", $arCols->eq(0)->text(), $match);
-        $address = $arCols->eq(0)->find("a")->text();
-        $addressUrl = str_replace(" ", "+", "Минск, ".$address);
-        $addressJSON = file_get_contents("http://geocode-maps.yandex.ru/1.x/?format=json&results=1&geocode={$addressUrl}");
-        $addressArray = json_decode($addressJSON, true);
+//        $address = $arCols->eq(0)->filter("a")->text();
+//        $addressUrl = str_replace(" ", "+", "Минск, ".$address);
+//        $addressJSON = file_get_contents("http://geocode-maps.yandex.ru/1.x/?format=json&results=1&geocode={$addressUrl}");
+//        $addressArray = json_decode($addressJSON, true);
         $rates = array();
         foreach($arCurrency as $pos=>$cur)
         {
@@ -89,13 +64,13 @@ class SelByParser implements ParserInterface
             if(!isset($arCurrency[$pos]["MAX"]) || ($rates[$cur["CODE"]] > $arCurrency[$pos]["MAX"])) $arCurrency[$pos]["MAX"] = $rates[$cur["CODE"]];
         }
 
-        $arResult["BANKS"][$rowParent]["SUB"][] = array(
-            "NAME" => $match[1],
-            "ADDRESS" => $address,
-            "JSON" => $addressJSON,
-            "POS" => explode(" ", $addressArray["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]),
-            "RATES" => $rates
-        );
+//        $arResult["BANKS"][$rowParent]["SUB"][] = array(
+//            "NAME" => $match[1],
+//            "ADDRESS" => $address,
+//            "JSON" => $addressJSON,
+//            "POS" => explode(" ", $addressArray["response"]["GeoObjectCollection"]["featureMember"][0]["GeoObject"]["Point"]["pos"]),
+//            "RATES" => $rates
+//        );
     }
 
     private function getAddress(Crawler $cell)
@@ -115,17 +90,62 @@ class SelByParser implements ParserInterface
         return $office;
     }
 
-    public function parse()
+    private function generateRowDataSet($officeCurrencies)
     {
+        $officeInfo = array_shift($officeCurrencies);
+        if (!isset($officeInfo['office']) || !isset($officeInfo['address'])) {
+            throw new \LogicException('There is no office info in first element of officeCurrencies array');
+        }
+
+        $currencies = array();
+        foreach ($officeCurrencies as $currencyArray) {
+            if (!is_array($currencyArray)) {
+                continue;
+            }
+
+            $currency = new RawData();
+            $currency->setBank($this->bankNameIterator);
+            $currency->setAddress($officeInfo['address']);
+            $currency->setOffice($officeInfo['office']);
+
+            foreach ($currencyArray as $direction => $exchangeRate) {
+                $currency->setDirection($direction);
+                $currency->setExchangeRate($exchangeRate);
+            }
+
+            $currencies[] = $currency;
+        }
+
+        return $currencies;
+    }
+
+    public function parseCurrencies(array $currencyMap)
+    {
+        $this->currencyMap = $currencyMap;
+
         $html = $this->getTargetHtml(self::TARGET_URL);
 
         $handleTableCell = function(Crawler $cell, $i)
         {
             if ($i) {
-                $this->handleTableCell($cell);
+                $direction = $this->getDirectionByIndex($i);
+                if (!$direction) {
+                    return null;
+                }
+
+                $value = $cell->text();
+
+                return array(
+                    $direction => $value,
+                );
             } else {
                 $office = $this->getOffice($cell);
                 $address = $this->getAddress($cell);
+
+                return array(
+                    'office' => $office,
+                    'address' => $address
+                );
             }
         };
 
@@ -134,15 +154,16 @@ class SelByParser implements ParserInterface
             $class = $row->eq(0)->attr('class');
 
             if ($class == self::EXPAND_CLASS) {
-                $row
+                $officeCurrencies = $row
                     ->filter('td')
                     ->each($handleTableCell)
                 ;
-            } else {
-                $ee = 2;
-            }
 
-            return $row->text();
+                $currencies = $this->generateRowDataSet($officeCurrencies);
+                $this->currencies = array_merge($this->currencies, $currencies);
+            } else {
+                $this->bankNameIterator = $row->eq(0)->filter('td')->eq(1)->filter('a')->text();
+            }
         };
 
         $document = new Crawler($html);
@@ -154,6 +175,10 @@ class SelByParser implements ParserInterface
 
     public function getNextRowData()
     {
-        // TODO: Implement getNextRowData() method.
+        if (!is_array($this->currencies) || !count($this->currencies)) {
+            return null;
+        }
+
+        return array_shift($this->currencies);
     }
 }

@@ -14,10 +14,7 @@ class RawData implements RawDataInterface
     private $address;
 
     /** @var string */
-    private $currencyFrom;
-
-    /** @var string */
-    private $currencyTo;
+    private $direction;
 
     /** @var string */
     private $exchangeRate;
@@ -29,9 +26,9 @@ class RawData implements RawDataInterface
         return $this;
     }
 
-    public function setOffice($bank)
+    public function setOffice($office)
     {
-        $this->bank = $bank;
+        $this->office = $office;
 
         return $this;
     }
@@ -43,16 +40,9 @@ class RawData implements RawDataInterface
         return $this;
     }
 
-    public function setCurrencyFrom($currencyFrom)
+    public function setDirection($direction)
     {
-        $this->currencyFrom = $currencyFrom;
-
-        return $this;
-    }
-
-    public function setCurrencyTo($currencyTo)
-    {
-        $this->currencyTo = $currencyTo;
+        $this->direction = $direction;
 
         return $this;
     }
@@ -79,14 +69,9 @@ class RawData implements RawDataInterface
         return $this->address;
     }
 
-    public function getCurrencyFrom()
+    public function getDirection()
     {
-        return $this->currencyFrom;
-    }
-
-    public function getCurrencyTo()
-    {
-        return $this->currencyTo;
+        return $this->direction;
     }
 
     public function getExchangeRate()

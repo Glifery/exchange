@@ -4,6 +4,6 @@ namespace Exchange\ParserBundle\Parser;
 
 interface ParserInterface
 {
-    public function parse();
+    public function parseCurrencies(array $currencyMap);
     public function getNextRowData();
 } 
