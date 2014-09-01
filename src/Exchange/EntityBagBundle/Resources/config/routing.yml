@@ -1,0 +1,3 @@
+exchange_entity_bag_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: ExchangeEntityBagBundle:Default:index }
