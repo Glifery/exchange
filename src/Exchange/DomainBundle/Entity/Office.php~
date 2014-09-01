@@ -1,0 +1,56 @@
+<?php
+
+namespace Exchange\DomainBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="office")
+ */
+class Office
+{
+    /**
+     * @var integer
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Bank", inversedBy="offices")
+     * @ORM\JoinColumn(name="bank_id", referencedColumnName="id")
+     */
+    private $bank;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $title;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $address;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $long;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string")
+     */
+    private $lat;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(type="datetime", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+     */
+    private $createdAt;
+}

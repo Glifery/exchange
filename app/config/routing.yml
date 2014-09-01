@@ -1,3 +1,7 @@
+exchange_domain:
+    resource: "@ExchangeDomainBundle/Resources/config/routing.yml"
+    prefix:   /
+
 exchange_entity_bag:
     resource: "@ExchangeEntityBagBundle/Resources/config/routing.yml"
     prefix:   /
