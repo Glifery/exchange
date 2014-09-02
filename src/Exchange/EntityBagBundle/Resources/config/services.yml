@@ -5,5 +5,3 @@ services:
     exchange_entity_bag.base_repository_bag:
         class: %exchange_entity_bag.base_repository_bag.class%
         arguments: [@doctrine.orm.entity_manager]
-        calls:
-            - [initRepository, ["ExchangeParseBundle\Entity\RawData"]]

@@ -2,7 +2,9 @@
 
 namespace Exchange\ParserBundle\Command;
 
-use Exchange\EntityBagBundle\Service\BaseRepositoryBag;
+use Exchange\DomainBundle\Entity\Office;
+use Exchange\DomainBundle\Service\OfficeBag;
+use Exchange\ParserBundle\RawData\RawData;
 use Exchange\ParserBundle\Service\ExchangeRateParser;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,9 +27,24 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         /** @var ExchangeRateParser $exchangeRateParser */
         $exchangeRateParser = $this->getContainer()->get('exchange_parser.exchange_rate_parser');
 
-        /** @var BaseRepositoryBag $bag */
-        $bag = $this->getContainer()->get('exchange_entity_bag.base_repository_bag');
+        /** @var OfficeBag $officeBag */
+        $officeBag = $this->getContainer()->get('exchange_domain.office_bag');
+        $officeBag->fillCache();
 
-        $exchangeRateParser->parse();
+        $rawDataSet = $exchangeRateParser->parse();
+        foreach ($rawDataSet as $rawData) {
+            /** @var RawData $rawData */
+            $address = $rawData->getAddress();
+            $criteria = array('address' => $address);
+
+            if (!($office = $officeBag->findEntity($criteria))) {
+                $office = new Office();
+                $office->setAddress($address);
+
+                $officeBag->addEntity($criteria, $office);
+            }
+        }
+
+        $officeBag->flush();
     }
 }

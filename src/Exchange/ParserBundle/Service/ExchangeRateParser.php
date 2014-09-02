@@ -67,8 +67,11 @@ class ExchangeRateParser
     {
         $this->parser->parseCurrencies($this->currencyMap);
 
-        while ($rowData = $this->parser->getNextRowData()) {
-            $rowData = $rowData;
+        $rawDataSet = array();
+        while ($rawData = $this->parser->getNextRowData()) {
+            $rawDataSet[] = $rawData;
         }
+
+        return $rawDataSet;
     }
 }

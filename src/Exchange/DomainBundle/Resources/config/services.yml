@@ -1,7 +1,9 @@
 parameters:
-#    exchange_domain.example.class: Exchange\DomainBundle\Example
+    exchange_domain.office_bag.class: Exchange\DomainBundle\Service\OfficeBag
 
 services:
-#    exchange_domain.example:
-#        class: %exchange_domain.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    exchange_domain.office_bag:
+        class: %exchange_domain.office_bag.class%
+        parent: "exchange_entity_bag.base_repository_bag"
+        calls:
+            - [initRepository, ["ExchangeDomainBundle:Office"]]
