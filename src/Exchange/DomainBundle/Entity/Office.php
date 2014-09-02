@@ -40,13 +40,13 @@ class Office
      * @var string
      * @ORM\Column(type="string")
      */
-    private $long;
+    private $latitude;
 
     /**
      * @var string
      * @ORM\Column(type="string")
      */
-    private $lat;
+    private $longitude;
 
     /**
      * @var \DateTime
@@ -116,9 +116,9 @@ class Office
      * @param string $long
      * @return Office
      */
-    public function setLong($long)
+    public function setLongitude($long)
     {
-        $this->long = $long;
+        $this->longitude = $long;
 
         return $this;
     }
@@ -128,9 +128,9 @@ class Office
      *
      * @return string 
      */
-    public function getLong()
+    public function getLongitude()
     {
-        return $this->long;
+        return $this->longitude;
     }
 
     /**
@@ -139,9 +139,9 @@ class Office
      * @param string $lat
      * @return Office
      */
-    public function setLat($lat)
+    public function setLatitude($lat)
     {
-        $this->lat = $lat;
+        $this->latitude = $lat;
 
         return $this;
     }
@@ -151,9 +151,9 @@ class Office
      *
      * @return string 
      */
-    public function getLat()
+    public function getLatitude()
     {
-        return $this->lat;
+        return $this->latitude;
     }
 
     /**

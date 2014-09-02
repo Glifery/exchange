@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ed5950b32d9dbee36d2093a63bf0f3a4",
+    "hash": "357e3f74d7ace35c90da3886752676dd",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -1616,6 +1616,52 @@
                 "templating"
             ],
             "time": "2014-07-05 12:19:05"
+        },
+        {
+            "name": "umbrella-web/sf2-google-geocoding-api-bundle",
+            "version": "dev-master",
+            "target-dir": "Umbrellaweb/Bundle/GoogleGeocodingApiBundle",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:umbrella-web/sf2-GoogleGeocodingApiBundle.git",
+                "reference": "895dae21fcd48111e756f87df1328a42265f651d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/umbrella-web/sf2-GoogleGeocodingApiBundle/zipball/895dae21fcd48111e756f87df1328a42265f651d",
+                "reference": "895dae21fcd48111e756f87df1328a42265f651d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-0": {
+                    "Umbrellaweb\\Bundle\\GoogleGeocodingApiBundle": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "umbrella-web",
+                    "email": "3rd.api@umbrella-web.com",
+                    "homepage": "http://umbrella-web.com/",
+                    "role": "Developer"
+                }
+            ],
+            "description": " Google Geocoding API integration for your Symfony2 project",
+            "homepage": "https://github.com/umbrella-web/sf2-GoogleGeocodingApiBundle",
+            "keywords": [
+                "Symfony2",
+                "geocoding",
+                "geolocation",
+                "google"
+            ],
+            "time": "2014-05-13 12:18:24"
         }
     ],
     "packages-dev": [
@@ -1675,7 +1721,8 @@
     ],
     "minimum-stability": "stable",
     "stability-flags": {
-        "symfony/dom-crawler": 20
+        "symfony/dom-crawler": 20,
+        "umbrella-web/sf2-google-geocoding-api-bundle": 20
     },
     "prefer-stable": false,
     "platform": {
