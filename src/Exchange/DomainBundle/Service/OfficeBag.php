@@ -15,7 +15,7 @@ class OfficeBag extends BaseRepositoryBag
             /** @var Office $office */
             $address = $office->getAddress();
 
-            $this->addEntity(array('address' => $address), $address);
+            $this->addEntity(array('address' => $address), $office);
         }
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Exchange\ParserBundle\Command;
 
+use Exchange\DomainBundle\Entity\Bank;
 use Exchange\DomainBundle\Entity\Office;
+use Exchange\DomainBundle\Service\BankBag;
 use Exchange\DomainBundle\Service\OfficeBag;
 use Exchange\ParserBundle\RawData\RawData;
 use Exchange\ParserBundle\Service\ExchangeRateParser;
@@ -30,7 +32,10 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         /** @var GeoParser $geoParser */
         $geoParser = $this->getContainer()->get('exchange_parser.geo_parser');
 
-        $bankBag =
+        /** @var BankBag $bankBag */
+        $bankBag = $this->getContainer()->get('exchange_domain.bank_bag');
+        $bankBag->fillCache();
+
         /** @var OfficeBag $officeBag */
         $officeBag = $this->getContainer()->get('exchange_domain.office_bag');
         $officeBag->fillCache();
@@ -39,19 +44,29 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         foreach ($rawDataSet as $rawData) {
             /** @var RawData $rawData */
             $address = $rawData->getAddress();
-            $criteria = array('address' => $address);
+            $bankName = $rawData->getBank();
 
-            if (!($office = $officeBag->findEntity($criteria))) {
+            $bankCriteria = array('title' => $bankName);
+            if (!($bank = $bankBag->findEntity($bankCriteria))) {
+                $bank = new Bank();
+                $bank->setTitle($bankName);
+
+                $bankBag->addEntity($bankCriteria, $bank);
+            }
+
+            $officeCriteria = array('address' => $address);
+            if (!($office = $officeBag->findEntity($officeCriteria))) {
                 $office = new Office();
                 $office->setTitle($rawData->getOffice());
+                $office->setBank($bank);
                 $office->setAddress($address);
 
-                if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
-                    $office->setLatitude($geoPosition->getLatitude());
-                    $office->setLongitude($geoPosition->getLongitude());
-                }
+//                if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
+//                    $office->setLatitude($geoPosition->getLatitude());
+//                    $office->setLongitude($geoPosition->getLongitude());
+//                }
 
-                $officeBag->addEntity($criteria, $office);
+                $officeBag->addEntity($officeCriteria, $office);
             }
         }
 
