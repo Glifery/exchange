@@ -20,7 +20,7 @@ class ExchangeRate
 
     /**
      * @ORM\ManyToOne(targetEntity="Office")
-     * @ORM\JoinColumn(name="office_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="office_id", referencedColumnName="id", onDelete=null)
      */
     private $office;
 
@@ -31,10 +31,16 @@ class ExchangeRate
     private $direction;
 
     /**
+     * @var float
+     * @ORM\Column(type="float")
+     */
+    private $value;
+
+    /**
      * @var \DateTime
      * @ORM\Column(type="datetime", columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
      */
-    private $createdAt;
+    private $updatedAt;
 
     /**
      * Get id
@@ -70,26 +76,26 @@ class ExchangeRate
     }
 
     /**
-     * Set createdAt
+     * Set updatedAt
      *
-     * @param \DateTime $createdAt
+     * @param \DateTime $updatedAt
      * @return ExchangeRate
      */
-    public function setCreatedAt($createdAt)
+    public function setUpdatedAt($updatedAt)
     {
-        $this->createdAt = $createdAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
     /**
-     * Get createdAt
+     * Get updatedAt
      *
      * @return \DateTime 
      */
-    public function getCreatedAt()
+    public function getUpdatedAt()
     {
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 
     /**
@@ -113,5 +119,21 @@ class ExchangeRate
     public function getOffice()
     {
         return $this->office;
+    }
+
+    /**
+     * @param mixed $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 }

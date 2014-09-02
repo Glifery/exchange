@@ -25,7 +25,7 @@ class Bank
     private $title;
 
     /**
-     * @ORM\OneToMany(targetEntity="Office", mappedBy="bank")
+     * @ORM\OneToMany(targetEntity="Office", mappedBy="bank", cascade={"all"})
      */
     private $offices;
 

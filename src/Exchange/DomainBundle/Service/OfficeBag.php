@@ -13,9 +13,15 @@ class OfficeBag extends BaseRepositoryBag
 
         foreach ($offices as $office) {
             /** @var Office $office */
+            $bank = $office->getBank();
+            $title = $office->getTitle();
             $address = $office->getAddress();
 
-            $this->addEntity(array('address' => $address), $office);
+            $this->addEntity(array(
+                    'bank' => $bank,
+                    'title' => $title,
+                    'address' => $address
+                ), $office);
         }
     }
 }

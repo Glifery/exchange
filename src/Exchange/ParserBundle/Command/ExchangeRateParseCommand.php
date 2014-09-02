@@ -3,8 +3,10 @@
 namespace Exchange\ParserBundle\Command;
 
 use Exchange\DomainBundle\Entity\Bank;
+use Exchange\DomainBundle\Entity\ExchangeRate;
 use Exchange\DomainBundle\Entity\Office;
 use Exchange\DomainBundle\Service\BankBag;
+use Exchange\DomainBundle\Service\ExchangeRateBag;
 use Exchange\DomainBundle\Service\OfficeBag;
 use Exchange\ParserBundle\RawData\RawData;
 use Exchange\ParserBundle\Service\ExchangeRateParser;
@@ -25,7 +27,7 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $output->writeln('Launch exchange rate parser');
+        $output->writeln('EXCHANGE RATES PARSER');
 
         /** @var ExchangeRateParser $exchangeRateParser */
         $exchangeRateParser = $this->getContainer()->get('exchange_parser.exchange_rate_parser');
@@ -34,42 +36,103 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
 
         /** @var BankBag $bankBag */
         $bankBag = $this->getContainer()->get('exchange_domain.bank_bag');
-        $bankBag->fillCache();
-
         /** @var OfficeBag $officeBag */
         $officeBag = $this->getContainer()->get('exchange_domain.office_bag');
-        $officeBag->fillCache();
+        /** @var ExchangeRateBag $exchangeRateBag */
+        $exchangeRateBag = $this->getContainer()->get('exchange_domain.exchange_rate_bag');
 
+        $output->writeln('..Cache filling:');
+
+        $output->write('....get banks...');
+        $bankBag->fillCache();
+        $output->writeln('done!');
+
+        $output->write('....get offices...');
+        $officeBag->fillCache();
+        $output->writeln('done!');
+
+        $output->write('....get exchange rates...');
+        $exchangeRateBag->fillCache();
+        $output->writeln('done!');
+
+        $output->write('..Parsing...');
         $rawDataSet = $exchangeRateParser->parse();
+        $output->writeln('found '.count($rawDataSet).' positions!');
+
+        $output->writeln('..Saving...');
+        $newBanksAmount = 0;
+        $newOfficesAmount = 0;
+        $newExchangeRatesAmount = 0;
+
         foreach ($rawDataSet as $rawData) {
             /** @var RawData $rawData */
             $address = $rawData->getAddress();
-            $bankName = $rawData->getBank();
+            $bankTitle = $rawData->getBank();
+            $direction = $rawData->getDirection();
 
-            $bankCriteria = array('title' => $bankName);
+            $bankCriteria = array('title' => $bankTitle);
             if (!($bank = $bankBag->findEntity($bankCriteria))) {
                 $bank = new Bank();
-                $bank->setTitle($bankName);
+                $bank->setTitle($bankTitle);
 
                 $bankBag->addEntity($bankCriteria, $bank);
+
+                $output->writeln('....new bank: \''.$bankTitle.'\'');
+                $newBanksAmount++;
             }
 
-            $officeCriteria = array('address' => $address);
+            $officeCriteria = array(
+                'bank' => $bank,
+                'title' => $rawData->getOffice(),
+                'address' => $address
+            );
             if (!($office = $officeBag->findEntity($officeCriteria))) {
                 $office = new Office();
                 $office->setTitle($rawData->getOffice());
                 $office->setBank($bank);
                 $office->setAddress($address);
 
-//                if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
-//                    $office->setLatitude($geoPosition->getLatitude());
-//                    $office->setLongitude($geoPosition->getLongitude());
-//                }
+                $office->setLatitude(123);
+                $office->setLongitude(456);
+
+                if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
+                    $office->setLatitude($geoPosition->getLatitude());
+                    $office->setLongitude($geoPosition->getLongitude());
+                }
 
                 $officeBag->addEntity($officeCriteria, $office);
-            }
-        }
 
+                $output->writeln('....new office: \''.$address.'\' ('.$bankTitle.')');
+                $newOfficesAmount++;
+            }
+
+            $exchangeRateCriteria = array(
+                'office' => $office,
+                'direction' => $direction
+            );
+            if (!($exchangeRate = $exchangeRateBag->findEntity($exchangeRateCriteria))) {
+                $exchangeRate = new ExchangeRate();
+                $exchangeRate->setDirection($direction);
+                $exchangeRate->setOffice($office);
+
+                $exchangeRateBag->addEntity($exchangeRateCriteria, $exchangeRate);
+
+                $newExchangeRatesAmount++;
+            } else {
+                $rrr = 3;
+            }
+
+            $exchangeRate->setValue($rawData->getExchangeRate());
+            $exchangeRate->setUpdatedAt(new \DateTime());
+        }
+        $output->writeln('..Saving results:');
+        $output->writeln('....'.$newBanksAmount.' banks created');
+        $output->writeln('....'.$newOfficesAmount.' offices created');
+        $output->writeln('....'.$newExchangeRatesAmount.' exchange rates created');
+
+        $output->write('..Flushing...');
         $officeBag->flush();
+        $output->writeln('done!');
+        $output->writeln('SUCCESSFUL FINISH');
     }
 }

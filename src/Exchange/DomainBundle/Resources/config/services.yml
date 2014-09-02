@@ -1,6 +1,7 @@
 parameters:
     exchange_domain.office_bag.class: Exchange\DomainBundle\Service\OfficeBag
     exchange_domain.bank_bag.class: Exchange\DomainBundle\Service\BankBag
+    exchange_domain.exchange_rate_bag.class: Exchange\DomainBundle\Service\ExchangeRateBag
 
 services:
     exchange_domain.office_bag:
@@ -14,3 +15,9 @@ services:
         parent: "exchange_entity_bag.base_repository_bag"
         calls:
             - [initRepository, ["ExchangeDomainBundle:Bank"]]
+
+    exchange_domain.exchange_rate_bag:
+        class: %exchange_domain.exchange_rate_bag.class%
+        parent: "exchange_entity_bag.base_repository_bag"
+        calls:
+            - [initRepository, ["ExchangeDomainBundle:ExchangeRate"]]

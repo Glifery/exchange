@@ -88,6 +88,16 @@ class BaseRepositoryBag implements BagInterface
         $this->em->persist($entity);
     }
 
+    public function removeEntity($entity)
+    {
+        $hash = array_keys($this->bag, $entity);
+        if (false !== $hash) {
+            unset($this->bag[$hash]);
+        }
+
+        $this->em->remove($entity);
+    }
+
     public function clearCache()
     {
         $this->bag = array();

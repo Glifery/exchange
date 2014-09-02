@@ -46,7 +46,7 @@ class SelByParser implements ParserInterface
 
     private function getAddress(Crawler $cell)
     {
-        $address = $cell->eq(0)->filter('a')->text();
+        $address = trim($cell->eq(0)->filter('a')->text());
 
         return $address;
     }
@@ -56,7 +56,7 @@ class SelByParser implements ParserInterface
         $officeAddress = $cell->eq(0)->text();
 
         preg_match("/- ([^,]*),.*/", $officeAddress, $match);
-        $office = $match[1];
+        $office = trim($match[1]);
 
         return $office;
     }
@@ -104,7 +104,7 @@ class SelByParser implements ParserInterface
                     return null;
                 }
 
-                $value = $cell->text();
+                $value = floatval($cell->text());
 
                 return array(
                     $direction => $value,
