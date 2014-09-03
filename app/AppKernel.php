@@ -20,6 +20,7 @@ class AppKernel extends Kernel
             new Exchange\ParserBundle\ExchangeParserBundle(),
             new Exchange\EntityBagBundle\ExchangeEntityBagBundle(),
             new Exchange\DomainBundle\ExchangeDomainBundle(),
+            new Exchange\MapBundle\ExchangeMapBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

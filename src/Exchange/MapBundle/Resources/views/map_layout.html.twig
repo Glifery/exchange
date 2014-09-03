@@ -1,0 +1,11 @@
+{% extends '::base.html.twig' %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, maximum-scale=1" />
+{% endblock meta %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="http://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"> </script>
+{% endblock javascripts %}
