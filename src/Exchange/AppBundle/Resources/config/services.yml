@@ -1,0 +1,7 @@
+parameters:
+#    exchange_app.example.class: Exchange\AppBundle\Example
+
+services:
+#    exchange_app.example:
+#        class: %exchange_app.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

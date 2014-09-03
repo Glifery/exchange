@@ -1,3 +1,7 @@
+exchange_app:
+    resource: "@ExchangeAppBundle/Resources/config/routing.yml"
+    prefix:   /
+
 exchange_map:
     resource: "@ExchangeMapBundle/Resources/config/routing.yml"
     prefix:   /

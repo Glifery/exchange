@@ -19,7 +19,8 @@
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
         "symfony/dom-crawler": "2.6.*@dev",
-        "umbrella-web/sf2-google-geocoding-api-bundle": "dev-master"
+        "umbrella-web/sf2-google-geocoding-api-bundle": "dev-master",
+        "bmatzner/jquery-mobile-bundle": "*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"

@@ -17,10 +17,14 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new Umbrellaweb\Bundle\GoogleGeocodingApiBundle\UmbrellawebGoogleGeocodingApiBundle(),
+            new Bmatzner\JQueryBundle\BmatznerJQueryBundle(),
+            new Bmatzner\JQueryMobileBundle\BmatznerJQueryMobileBundle(),
+
             new Exchange\ParserBundle\ExchangeParserBundle(),
             new Exchange\EntityBagBundle\ExchangeEntityBagBundle(),
             new Exchange\DomainBundle\ExchangeDomainBundle(),
             new Exchange\MapBundle\ExchangeMapBundle(),
+            new Exchange\AppBundle\ExchangeAppBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

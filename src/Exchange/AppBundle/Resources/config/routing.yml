@@ -1,0 +1,3 @@
+exchange_app_homepage:
+    path:     /
+    defaults: { _controller: ExchangeAppBundle:Default:index }

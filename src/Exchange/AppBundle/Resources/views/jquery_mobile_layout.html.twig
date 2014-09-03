@@ -1,0 +1,17 @@
+{% extends '::base.html.twig' %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, maximum-scale=1" />
+{% endblock meta %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/bmatznerjquery/js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/bmatznerjquerymobile/js/jquery.mobile.min.js') }}"></script>
+{% endblock javascripts %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/bmatznerjquerymobile/css/jquery.mobile.min.css') }}" />
+{% endblock stylesheets %}
