@@ -1,7 +1,6 @@
 {% extends 'ExchangeMapBundle::map_layout.html.twig' %}
 
-{% block body %}
-    Hello name!
+{% block map %}
     <div id="map" style="width: 600px; height: 400px"></div>
     <script type="text/javascript">
         ymaps.ready(init);
@@ -14,4 +13,4 @@
             });
         }
     </script>
-{% endblock body %}
+{% endblock map %}
