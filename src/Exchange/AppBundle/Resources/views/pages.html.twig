@@ -2,9 +2,15 @@
 
 {% block body %}
     <div data-role="page" id="page-map">
-        <div data-role="header">Exchange</div>
+        <div data-role="header">
+            <h1>Exchange</h1>
+            <a href="#left-panel" data-icon="carat-r" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-nodisc-icon">Open left panel</a>
+        </div>
         <div role="main" class="ui-content">
             {% block map %}{% endblock map %}
+        </div>
+        <div data-role="panel" id="left-panel" data-theme="b">
+            {% block panel %}{% endblock panel %}
         </div>
         <div data-role="footer">Exchange</div>
     </div>

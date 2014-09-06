@@ -1,16 +1,24 @@
 {% extends 'ExchangeMapBundle::map_layout.html.twig' %}
 
 {% block map %}
-    <div id="map" style="width: 600px; height: 400px"></div>
-    <script type="text/javascript">
-        ymaps.ready(init);
-        var myMap;
-
-        function init(){
-            myMap = new ymaps.Map("map", {
-                center: [55.76, 37.64],
-                zoom: 7
-            });
-        }
-    </script>
+    <div id="map" style="width: 100%; height: 600px"></div>
+    <script src="{{ asset('bundles/exchangemap/js/map.js') }}"></script>
 {% endblock map %}
+
+{% block panel %}
+    <p>Настройки валют</p>
+    <select name="slider" id="flip-a" data-role="slider">
+        <option value="H">Покупка</option>
+        <option value="L">Продажа</option>
+    </select>
+    <fieldset data-role="controlgroup" data-iconpos="right">
+        <legend>Выберите валюту:</legend>
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6a" value="on" checked="checked">
+        <label for="radio-choice-w-6a">USD</label>
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6b" value="off">
+        <label for="radio-choice-w-6b">EUR</label>
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6c" value="other">
+        <label for="radio-choice-w-6c">RUS</label>
+    </fieldset>
+    <input type="range" name="slider" value="25" min="0" max="100"  />
+{% endblock panel %}
