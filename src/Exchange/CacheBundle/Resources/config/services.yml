@@ -1,0 +1,20 @@
+parameters:
+    exchange_cache.cache_manager.class: Exchange\CacheBundle\Service\CacheManager
+    exchange_cache.provider.exchange_cache.class: Exchange\CacheBundle\Service\Provider\ExchangeCacheProvider
+    exchange_cache.transformer.json.class: Exchange\CacheBundle\Service\Transformer\JsonTransformer
+    exchange_cache.saver.js.class: Exchange\CacheBundle\Service\Saver\JsSaver
+
+services:
+    exchange_cache.provider.exchange_cache:
+        class: %exchange_cache.provider.exchange_cache.class%
+        arguments: [@doctrine.orm.entity_manager]
+
+    exchange_cache.transformer.json:
+        class: %exchange_cache.transformer.json.class%
+
+    exchange_cache.saver.js:
+        class: %exchange_cache.saver.js.class%
+
+    exchange_cache.cache_manager:
+        class: %exchange_cache.cache_manager.class%
+        arguments: [@exchange_cache.provider.exchange_cache, @exchange_cache.transformer.json, @exchange_cache.saver.js]

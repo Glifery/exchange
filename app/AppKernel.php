@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Exchange\DomainBundle\ExchangeDomainBundle(),
             new Exchange\MapBundle\ExchangeMapBundle(),
             new Exchange\AppBundle\ExchangeAppBundle(),
+            new Exchange\CacheBundle\ExchangeCacheBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

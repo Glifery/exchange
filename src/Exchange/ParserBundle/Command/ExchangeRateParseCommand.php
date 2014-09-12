@@ -2,6 +2,7 @@
 
 namespace Exchange\ParserBundle\Command;
 
+use Exchange\CacheBundle\Service\CacheManager;
 use Exchange\DomainBundle\Entity\Bank;
 use Exchange\DomainBundle\Entity\ExchangeRate;
 use Exchange\DomainBundle\Entity\Office;
@@ -40,6 +41,8 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         $officeBag = $this->getContainer()->get('exchange_domain.office_bag');
         /** @var ExchangeRateBag $exchangeRateBag */
         $exchangeRateBag = $this->getContainer()->get('exchange_domain.exchange_rate_bag');
+        /** @var CacheManager $cacheManager */
+        $cacheManager = $this->getContainer()->get('exchange_cache.cache_manager');
 
         $output->writeln('..Cache filling:');
 
@@ -118,8 +121,6 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
                 $exchangeRateBag->addEntity($exchangeRateCriteria, $exchangeRate);
 
                 $newExchangeRatesAmount++;
-            } else {
-                $rrr = 3;
             }
 
             $exchangeRate->setValue($rawData->getExchangeRate());
@@ -133,6 +134,11 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         $output->write('..Flushing...');
         $officeBag->flush();
         $output->writeln('done!');
+
+        $output->write('..Cache JS saving...');
+        $cacheManager->regenerateCache();
+        $output->writeln('done!');
+
         $output->writeln('SUCCESSFUL FINISH');
     }
 }

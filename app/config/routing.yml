@@ -1,3 +1,7 @@
+exchange_cache:
+    resource: "@ExchangeCacheBundle/Resources/config/routing.yml"
+    prefix:   /
+
 exchange_app:
     resource: "@ExchangeAppBundle/Resources/config/routing.yml"
     prefix:   /
