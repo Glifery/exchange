@@ -1,52 +1,123 @@
 (function() {
-    var mapModule = (function() {
+    var logModule = (function() {
+        function log() {
+            console.log.apply(console, arguments);
+        }
+
+        return {
+            log: log
+        }
+    })();
+
+    var storageModule = (function(log) {
+        var direction, value, storage;
+
+        function init() {
+            if (typeof window.exchanges !== 'array') {
+                log.log('Exchanges storage is empdy or don\'t exists');
+            }
+
+            storage = window.exchanges;
+        }
+
+        function setDirection(newDirection) {
+            direction = newDirection;
+        }
+
+        function setValue(newValue) {
+            value = newValue;
+        }
+
+        function getList() {
+            var filteredValues = [];
+
+            for (var i in storage) {
+//                if ((storage[i].direction == direction) && (storage[i].value == value)) {
+                    //TODO: greater than etc...
+                    filteredValues.push(storage[i]);
+//                }
+            }
+
+            return filteredValues;
+        }
+
+        init();
+
+        return {
+            setDirection: setDirection,
+            setValue: setValue,
+            getList: getList
+        }
+    })(logModule);
+
+    var mapModule = (function(storage) {
+        console.log('storage', storage);
         ymaps.ready(initMapOnReady);
 
-        var myMap;
+        var myMap, cluster;
 
         function initMapOnReady() {
             myMap = createMap();
-            myMap.geoObjects.add(createObject());
+
+            cluster = new ymaps.Clusterer();
+            myMap.geoObjects.add(cluster);
+
+            reloadCluster();
         }
 
         function createMap() {
-            var $mapElement = $('#map');
-
             var map = new ymaps.Map("map", {
                 center: [53.90, 27.53],
                 zoom: 11
             });
 
-            // Включим масштабирование колесом мыши
-            map.behaviors.enable('scrollZoom');
-            // Создание экземпляра элемента управления
+            map.behaviors.enable('scrollZoom');// Включим масштабирование колесом мыши
             map.controls.add(
-                new ymaps.control.ZoomControl()
+                new ymaps.control.ZoomControl()// Создание экземпляра элемента управления
             );
 
             return map;
         }
 
-        function createObject() {
-            var myGeoObject = new ymaps.GeoObject({
+        function reloadCluster()
+        {
+            var elements,
+                objects = [];
+
+            cluster.removeAll();
+            elements = storage.getList();
+
+            for (var i in elements) {
+                var object = createObject(elements[i]);
+                objects.push(object);
+            }
+            console.log('objects', cluster);
+            cluster.add(objects);
+            console.log('2222', cluster);
+
+            console.log('draw!!');
+        }
+
+        function createObject(element) {
+            var object = new ymaps.GeoObject({
                 geometry: {
                     type: "Point",// тип геометрии - точка
-                    coordinates: [53.90, 27.53] // координаты точки
+                    coordinates: [element.office.latitude, element.office.longitude] // координаты точки
                 },
                 properties: {
                     balloonContent: 'qwert yui',
-                    balloonContentHeader: "Заголовок балуна",
-                    balloonContentBody: 'Текст балуна № 1',
-                    balloonContentFooter: 'footer',
-                    iconContent:'12344p',
-                    hintContent: "Подсказка",
-                    clusterCaption: 'Геообъект № 1'
+                    balloonContentHeader: element.office.bank.title,
+                    balloonContentBody: element.office.address,
+                    balloonContentFooter: element.office.title,
+                    iconContent: element.value,
+                    hintContent: element.office.bank.title,
+                    clusterCaption: element.office.bank.title
                 }
             },{
                 preset: "twirl#blueStretchyIcon"
             });
 
-            return myGeoObject;
+            return object;
         }
-    })();
+    })(storageModule);
 })();
