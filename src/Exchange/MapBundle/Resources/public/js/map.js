@@ -51,8 +51,7 @@
     })(logModule);
 
     var mapModule = (function(storage) {
-        console.log('storage', storage);
-        ymaps.ready(initMapOnReady);
+//        ymaps.ready(initMapOnReady);
 
         var myMap, cluster;
 
@@ -91,11 +90,8 @@
                 var object = createObject(elements[i]);
                 objects.push(object);
             }
-            console.log('objects', cluster);
-            cluster.add(objects);
-            console.log('2222', cluster);
 
-            console.log('draw!!');
+            cluster.add(objects);
         }
 
         function createObject(element) {
@@ -119,5 +115,31 @@
 
             return object;
         }
+    })(storageModule);
+
+    var filterModule = (function(storage) {
+        var selector = {
+                switch: '.js-filter-switch',
+                radio: '.js-filter-radio',
+                slider: '.js-filter-slider'
+            };
+
+        function init() {
+            console.log('init!', selector.slider);
+
+            $(selector.switch).on('change', function() {
+                console.log('switch', $(selector.switch).val());
+            });
+
+            $(selector.radio).on('change', function() {
+                console.log('radio', $(selector.radio + ' input:radio:checked').val());
+            });
+
+            $(selector.slider).on('slidestop', function() {
+                console.log('slider', $(selector.slider).val());
+            });
+        }
+
+        $(document).on('pagecreate', '#page-map', init);
     })(storageModule);
 })();

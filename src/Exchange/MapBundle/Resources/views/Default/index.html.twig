@@ -1,28 +1,26 @@
 {% extends 'ExchangeMapBundle::map_layout.html.twig' %}
 
 {% block content %}
-    <div id="map" style="width: 100%; height: 600px"></div>
-    <script src="{{ asset('data/exchange.js') }}"></script>
-    <script src="{{ asset('bundles/exchangemap/js/map.js') }}"></script>
+    <div id="map" style="width: 100%; height: 200px"></div>
 {% endblock content %}
 
 {% block panel %}
     <p>Настройки валют</p>
-    <select name="slider" id="flip-a" data-role="slider">
+    <select class="js-filter-switch" name="slider" id="flip-a" data-role="slider">
         <option value="H">Покупка</option>
         <option value="L">Продажа</option>
     </select>
-    <fieldset data-role="controlgroup" data-iconpos="right">
+    <fieldset class="js-filter-radio" data-role="controlgroup" data-iconpos="right">
         <legend>Выберите валюту:</legend>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6a" value="on" checked="checked">
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6a" value="usd" checked="checked">
         <label for="radio-choice-w-6a">USD</label>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6b" value="off">
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6b" value="eur">
         <label for="radio-choice-w-6b">EUR</label>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6c" value="other">
+        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6c" value="rus">
         <label for="radio-choice-w-6c">RUS</label>
     </fieldset>
 {% endblock panel %}
 
 {% block footer %}
-    <input type="range" name="slider" value="25" min="0" max="100"  />
+    <input class="js-filter-slider" type="range" name="slider" value="25" min="0" max="100"  />
 {% endblock footer %}
