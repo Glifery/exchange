@@ -10,7 +10,12 @@
     })();
 
     var storageModule = (function(log) {
-        var direction, value, storage;
+        var direction,
+            value,
+            elements,
+            limits = {min: null, max: null},
+            subscribedFunctions = [],
+            storage = {};
 
         function init() {
             if (typeof window.exchanges !== 'array') {
@@ -22,37 +27,80 @@
 
         function setDirection(newDirection) {
             direction = newDirection;
+
+            return storage;
         }
 
         function setValue(newValue) {
             value = newValue;
+
+            return storage;
         }
 
-        function getList() {
-            var filteredValues = [];
+        function getElements() {
+            return elements;
+        }
+
+        function getLimits() {
+            return limits;
+        }
+
+        function reloadElements() {
+            var minLimit, maxLimit;
+
+            elements = [];
 
             for (var i in storage) {
-//                if ((storage[i].direction == direction) && (storage[i].value == value)) {
-                    //TODO: greater than etc...
-                    filteredValues.push(storage[i]);
-//                }
+                if (
+                    (storage[i].direction == direction)
+//                    && (storage[i].value >= limits.min)
+//                    && (storage[i].value <= limits.max)
+                ) {
+                    if (!minLimit || minLimit > storage[i].value) {
+                        minLimit = storage[i].value;
+                    }
+
+                    if (!maxLimit || maxLimit < storage[i].value) {
+                        maxLimit = storage[i].value;
+                    }
+
+                    elements.push(storage[i]);
+                }
             }
 
-            return filteredValues;
+            limits.min = minLimit;
+            limits.max = maxLimit;
+            console.log('limits', limits);
+
+            return storage;
+        }
+
+        function subscribeOnReload(fn) {
+            subscribedFunctions.push(fn);
+        }
+
+        function updateEvent() {
+            log.log('updating positions...');
+            reloadElements();
+
+            for (var i in subscribedFunctions) {
+                subscribedFunctions[i](storage);
+            }
         }
 
         init();
 
-        return {
-            setDirection: setDirection,
-            setValue: setValue,
-            getList: getList
-        }
+        storage.setDirection = setDirection;
+        storage.setValue = setValue;
+        storage.getElements = getElements;
+        storage.getLimits = getLimits;
+        storage.onReload = subscribeOnReload;
+        storage.update = updateEvent;
+
+        return storage;
     })(logModule);
 
     var mapModule = (function(storage) {
-//        ymaps.ready(initMapOnReady);
-
         var myMap, cluster;
 
         function initMapOnReady() {
@@ -61,11 +109,13 @@
             cluster = new ymaps.Clusterer();
             myMap.geoObjects.add(cluster);
 
-            reloadCluster();
+            storage.onReload(reloadCluster);
+
+            reloadCluster(storage);
         }
 
         function createMap() {
-            var map = new ymaps.Map("map", {
+            var map = new ymaps.Map('map', {
                 center: [53.90, 27.53],
                 zoom: 11
             });
@@ -78,13 +128,13 @@
             return map;
         }
 
-        function reloadCluster()
+        function reloadCluster(storage)
         {
-            var elements,
+            var elements = storage.getElements(),
                 objects = [];
 
+            console.log('reload with', elements);
             cluster.removeAll();
-            elements = storage.getList();
 
             for (var i in elements) {
                 var object = createObject(elements[i]);
@@ -115,6 +165,8 @@
 
             return object;
         }
+
+        ymaps.ready(initMapOnReady);
     })(storageModule);
 
     var filterModule = (function(storage) {
@@ -124,20 +176,35 @@
                 slider: '.js-filter-slider'
             };
 
+        function changeDirection() {
+            var switchVal = $(selector.switch).val(),
+                radioVal = $(selector.radio + ' input:radio:checked').val(),
+                direction = radioVal + '_' + switchVal;
+
+            storage.setDirection(direction).update();
+
+        }
+
+        function updateLimits(storage) {
+            $(selector.slider).attr('min', storage.getLimits().min);
+            $(selector.slider).attr('max', storage.getLimits().max);
+            $(selector.slider).slider('refresh');
+
+            console.log('update limits', storage.getLimits());
+        }
+
         function init() {
-            console.log('init!', selector.slider);
+            $(selector.switch).on('change', changeDirection);
 
-            $(selector.switch).on('change', function() {
-                console.log('switch', $(selector.switch).val());
-            });
-
-            $(selector.radio).on('change', function() {
-                console.log('radio', $(selector.radio + ' input:radio:checked').val());
-            });
+            $(selector.radio).on('change', changeDirection);
 
             $(selector.slider).on('slidestop', function() {
                 console.log('slider', $(selector.slider).val());
             });
+
+            storage.onReload(updateLimits);
+
+            changeDirection();
         }
 
         $(document).on('pagecreate', '#page-map', init);
