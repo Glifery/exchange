@@ -15,14 +15,17 @@
             elements,
             limits = {min: null, max: null},
             subscribedFunctions = [],
+            exchanges,
+            statistic,
             storage = {};
 
         function init() {
-            if (typeof window.exchanges !== 'array') {
+            if (typeof window.exchange !== 'array') {
                 log.log('Exchanges storage is empdy or don\'t exists');
             }
 
-            storage = window.exchanges;
+            exchanges = window.exchange.exchanges;
+            statistic = window.exchange.statistic;
         }
 
         function setDirection(newDirection) {
@@ -50,27 +53,27 @@
 
             elements = [];
 
-            for (var i in storage) {
+            for (var i in exchanges) {
                 if (
-                    (storage[i].direction == direction)
+                    (exchanges[i].direction == direction)
 //                    && (storage[i].value >= limits.min)
 //                    && (storage[i].value <= limits.max)
                 ) {
-                    if (!minLimit || minLimit > storage[i].value) {
-                        minLimit = storage[i].value;
-                    }
+//                    if (!minLimit || minLimit > exchanges[i].value) {
+//                        minLimit = exchanges[i].value;
+//                    }
+//
+//                    if (!maxLimit || maxLimit < exchanges[i].value) {
+//                        maxLimit = exchanges[i].value;
+//                    }
 
-                    if (!maxLimit || maxLimit < storage[i].value) {
-                        maxLimit = storage[i].value;
-                    }
-
-                    elements.push(storage[i]);
+                    elements.push(exchanges[i]);
                 }
             }
 
-            limits.min = minLimit;
-            limits.max = maxLimit;
-            console.log('limits', limits);
+            limits.min = statistic[direction].min;
+            limits.max = statistic[direction].max;
+            limits.optimal = statistic[direction].optimal;
 
             return storage;
         }
