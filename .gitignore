@@ -12,3 +12,5 @@
 
 .idea/
 composer.phar
+
+/web/data/

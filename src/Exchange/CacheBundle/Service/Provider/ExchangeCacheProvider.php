@@ -6,14 +6,12 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Exchange\CacheBundle\Model\CacheData;
 use Exchange\DomainBundle\Entity\ExchangeRate;
+use Exchange\DomainBundle\Service\ExchangeStatistic;
 
 class ExchangeCacheProvider implements CacheProviderInterface
 {
-    /** @var EntityRepository */
-//    private $bankRepo;
-
-    /** @var EntityRepository */
-//    private $officeRepo;
+    /** @var ExchangeStatistic */
+    private $exchangeStatistic;
 
     /** @var EntityRepository */
     private $exchangeRepo;
@@ -23,34 +21,31 @@ class ExchangeCacheProvider implements CacheProviderInterface
 
     /**
      * @param EntityManager $em
+     * @param \Exchange\DomainBundle\Service\ExchangeStatistic $exchangeStatistic
      */
-    public function __construct(EntityManager $em)
+    public function __construct(EntityManager $em, ExchangeStatistic $exchangeStatistic)
     {
-//        $this->bankRepo = $em->getRepository('ExchangeDomainBundle:Bank');
-//        $this->officeRepo = $em->getRepository('ExchangeDomainBundle:Office');
         $this->exchangeRepo = $em->getRepository('ExchangeDomainBundle:ExchangeRate');
+        $this->exchangeStatistic = $exchangeStatistic;
     }
 
     /**
      * @param array $exchangeSet
-     * @param array $officeSet
-     * @param array $bankSet
+     * @param array $statistic
+     * @internal param array $officeSet
+     * @internal param array $bankSet
      * @return bool
      */
-    private function checkResults(array $exchangeSet, array $officeSet, array $bankSet)
+    private function checkResults(array $exchangeSet, array $statistic)
     {
         if (!count($exchangeSet)) {
             $this->setLastError('exchange repository is empty');
 
             return false;
         }
-        if (!count($officeSet)) {
-            $this->setLastError('office repository is empty');
 
-            return false;
-        }
-        if (!count($bankSet)) {
-            $this->setLastError('bank repository is empty');
+        if (!count($statistic)) {
+            $this->setLastError('statistic array is empty');
 
             return false;
         }
@@ -59,19 +54,11 @@ class ExchangeCacheProvider implements CacheProviderInterface
     }
 
     /**
-     * @param array $exchangeSet
-     * @param array $officeSet
-     * @param array $bankSet
+     * @param array $data
      * @return CacheData
      */
-    private function generateCacheData(array $exchangeSet, array $officeSet, array $bankSet)
+    private function generateCacheData(array $data)
     {
-        $data = array(
-            'exchanges' => $exchangeSet,
-            'offices' => $officeSet,
-            'banks' => $bankSet
-        );
-
         $cacheData = new CacheData();
         $cacheData->setData($data);
 
@@ -83,23 +70,13 @@ class ExchangeCacheProvider implements CacheProviderInterface
      */
     public function provide()
     {
-        $exchangeSet = array();
-        $officeSet = array();
-        $bankSet = array();
+        $exchangeData = $this->exchangeStatistic->getExchangeData();
 
-        $exchanges = $this->exchangeRepo->findAll();
-        foreach ($exchanges as $exchange) {
-            /** @var ExchangeRate $exchange */
-            $exchangeSet[$exchange->getId()] = $exchange;
-            $officeSet[$exchange->getOffice()->getId()] = $exchange->getOffice();
-            $bankSet[$exchange->getOffice()->getBank()->getId()] = $exchange->getOffice()->getBank();
-        }
-
-        if (!$this->checkResults($exchangeSet, $officeSet, $bankSet)) {
+        if (!$this->checkResults($exchangeData['exchanges'], $exchangeData['statistic'])) {
             return null;
         }
 
-        return $this->generateCacheData($exchangeSet, $officeSet, $bankSet);
+        return $this->generateCacheData($exchangeData);
     }
 
     /**

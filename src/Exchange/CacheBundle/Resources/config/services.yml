@@ -7,7 +7,7 @@ parameters:
 services:
     exchange_cache.provider.exchange_cache:
         class: %exchange_cache.provider.exchange_cache.class%
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [@doctrine.orm.entity_manager, @exchange_domain.exchange_statistic]
 
     exchange_cache.transformer.json:
         class: %exchange_cache.transformer.json.class%

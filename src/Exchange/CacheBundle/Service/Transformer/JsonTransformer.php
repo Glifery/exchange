@@ -9,7 +9,7 @@ use Exchange\DomainBundle\Entity\Office;
 
 class JsonTransformer implements CacheTransformerInterface
 {
-    const DATA_WRAP = 'window.exchanges = %data%;';
+    const DATA_WRAP = 'window.exchange = %data%;';
 
     private $lastError;
 
@@ -82,7 +82,12 @@ class JsonTransformer implements CacheTransformerInterface
             $preparedData[] = $preparedExchange;
         }
 
-        if (!$jsonData = json_encode($preparedData, JSON_UNESCAPED_UNICODE)) {
+        $fullPreparedData = array(
+            'exchanges' => $preparedData,
+            'statistic' => $data['statistic']
+        );
+
+        if (!$jsonData = json_encode($fullPreparedData, JSON_UNESCAPED_UNICODE)) {
             $this->setLastError('Transformed JSON is empty');
 
             return false;
