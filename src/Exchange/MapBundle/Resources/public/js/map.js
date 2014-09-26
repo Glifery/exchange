@@ -136,7 +136,7 @@
             var elements = storage.getElements(),
                 objects = [];
 
-            console.log('reload with', elements);
+            console.log('reload with');
             cluster.removeAll();
 
             for (var i in elements) {
@@ -188,12 +188,19 @@
 
         }
 
+        function changeValue() {
+            var value = $(selector.slider).val();
+
+            console.log('slider', value);
+        }
+
         function updateLimits(storage) {
             $(selector.slider).attr('min', storage.getLimits().min);
             $(selector.slider).attr('max', storage.getLimits().max);
+            $(selector.slider).val(storage.getLimits().optimal);
             $(selector.slider).slider('refresh');
 
-            console.log('update limits', storage.getLimits());
+            console.log('UPDATE limits: '+storage.getLimits().min+'->'+storage.getLimits().optimal+'<-'+storage.getLimits().max);
         }
 
         function init() {
@@ -201,9 +208,7 @@
 
             $(selector.radio).on('change', changeDirection);
 
-            $(selector.slider).on('slidestop', function() {
-                console.log('slider', $(selector.slider).val());
-            });
+            $(selector.slider).on('slidestop', changeValue);
 
             storage.onReload(updateLimits);
 
