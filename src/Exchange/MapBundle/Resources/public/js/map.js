@@ -44,7 +44,11 @@
             return elements;
         }
 
-        function getLimits() {
+        function getLimits(direction) {
+            if (typeof direction != 'undefined') {
+                return statistic[direction];
+            }
+
             return limits;
         }
 
@@ -82,12 +86,16 @@
             subscribedFunctions.push(fn);
         }
 
-        function updateEvent() {
+        function updateEvent(fn) {
             log.log('updating positions...');
             reloadElements();
 
             for (var i in subscribedFunctions) {
                 subscribedFunctions[i](storage);
+            }
+
+            if (typeof fn == 'function') {
+                fn(storage);
             }
         }
 
@@ -182,9 +190,14 @@
         function changeDirection() {
             var switchVal = $(selector.switch).val(),
                 radioVal = $(selector.radio + ' input:radio:checked').val(),
-                direction = radioVal + '_' + switchVal;
+                direction = radioVal + '_' + switchVal,
+                value = storage.getLimits(direction).optimal;
 
-            storage.setDirection(direction).update();
+            console.log('change direction', direction, 'value', value);
+            storage
+                .setDirection(direction)
+                .setValue(value)
+                .update(updateLimits);
 
         }
 
@@ -192,6 +205,7 @@
             var value = $(selector.slider).val();
 
             console.log('slider', value);
+            storage.setValue(value).update();
         }
 
         function updateLimits(storage) {
@@ -200,7 +214,7 @@
             $(selector.slider).val(storage.getLimits().optimal);
             $(selector.slider).slider('refresh');
 
-            console.log('UPDATE limits: '+storage.getLimits().min+'->'+storage.getLimits().optimal+'<-'+storage.getLimits().max);
+            console.log('updateLimits');
         }
 
         function init() {
@@ -210,7 +224,7 @@
 
             $(selector.slider).on('slidestop', changeValue);
 
-            storage.onReload(updateLimits);
+//            storage.onReload(updateLimits);
 
             changeDirection();
         }
