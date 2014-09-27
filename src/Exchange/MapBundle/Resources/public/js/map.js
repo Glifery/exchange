@@ -13,7 +13,7 @@
         var direction,
             value,
             elements,
-            limits = {min: null, max: null},
+            limits = {min: null, max: null, compare: null, optimal: null},
             subscribedFunctions = [],
             exchanges,
             statistic,
@@ -53,33 +53,29 @@
         }
 
         function reloadElements() {
-            var minLimit, maxLimit;
-
             elements = [];
 
             for (var i in exchanges) {
                 if (
-                    (exchanges[i].direction == direction)
-//                    && (storage[i].value >= limits.min)
-//                    && (storage[i].value <= limits.max)
+                    (exchanges[i].direction == direction) &&
+                    (
+                        ((exchanges[i].value <= value) && (limits.compare == 'min')) ||
+                        ((exchanges[i].value >= value) && (limits.compare == 'max'))
+                    )
                 ) {
-//                    if (!minLimit || minLimit > exchanges[i].value) {
-//                        minLimit = exchanges[i].value;
-//                    }
-//
-//                    if (!maxLimit || maxLimit < exchanges[i].value) {
-//                        maxLimit = exchanges[i].value;
-//                    }
-
                     elements.push(exchanges[i]);
                 }
             }
 
+            return storage;
+        }
+
+        function reloadLimits()
+        {
             limits.min = statistic[direction].min;
             limits.max = statistic[direction].max;
             limits.optimal = statistic[direction].optimal;
-
-            return storage;
+            limits.compare = statistic[direction].compare;
         }
 
         function subscribeOnReload(fn) {
@@ -88,6 +84,7 @@
 
         function updateEvent(fn) {
             log.log('updating positions...');
+            reloadLimits();
             reloadElements();
 
             for (var i in subscribedFunctions) {
@@ -120,9 +117,9 @@
             cluster = new ymaps.Clusterer();
             myMap.geoObjects.add(cluster);
 
-            storage.onReload(reloadCluster);
+            storage.onReload(launchReloadCluster);
 
-            reloadCluster(storage);
+            launchReloadCluster(storage);
         }
 
         function createMap() {
@@ -137,6 +134,13 @@
             );
 
             return map;
+        }
+
+        function launchReloadCluster(argument)
+        {
+            setTimeout(function() {
+                reloadCluster(argument)
+            }, 0);
         }
 
         function reloadCluster(storage)

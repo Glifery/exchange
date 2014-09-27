@@ -1,14 +1,14 @@
 {% extends 'ExchangeMapBundle::map_layout.html.twig' %}
 
 {% block content %}
-    <div id="map" style="width: 100%; height: 200px"></div>
+    <div id="map" style="width: 100%; height: 600px"></div>
 {% endblock content %}
 
 {% block panel %}
     <p>Настройки валют</p>
     <select class="js-filter-switch" name="slider" id="flip-a" data-role="slider">
-        <option value="H">Покупка</option>
-        <option value="L">Продажа</option>
+        <option value="L" selected>Продать</option>
+        <option value="H">Купить</option>
     </select>
     <fieldset class="js-filter-radio" data-role="controlgroup" data-iconpos="right">
         <legend>Выберите валюту:</legend>
