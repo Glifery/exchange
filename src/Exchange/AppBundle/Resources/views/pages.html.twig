@@ -6,7 +6,7 @@
             <h1>Курсы валют</h1>
             <a href="#left-panel" data-icon="carat-r" data-iconpos="notext" data-shadow="false" data-iconshadow="false" class="ui-nodisc-icon">Open left panel</a>
         </div>
-        <div role="main" class="ui-content">
+        <div role="main" class="ui-content" style="padding: 0px">
             {% block content %}{% endblock content %}
         </div>
         <div data-role="panel" id="left-panel" data-theme="b">
@@ -17,3 +17,8 @@
         </div>
     </div>
 {% endblock body %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/exchangeapp/js/main.js') }}"></script>
+{% endblock javascripts %}
