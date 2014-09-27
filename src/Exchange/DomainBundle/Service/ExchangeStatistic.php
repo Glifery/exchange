@@ -67,6 +67,7 @@ class ExchangeStatistic
                 default: throw new \LogicException('Unexpected direction: '.$statistic['direction']);
             }
 
+            $statistic['compare'] = $optimalField;
             $statistic['optimal'] = $statistic[$optimalField];
         }
 
