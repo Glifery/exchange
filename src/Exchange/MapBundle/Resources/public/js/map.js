@@ -171,7 +171,7 @@
                     balloonContentFooter: element.office.title,
                     iconContent: element.value,
                     hintContent: element.office.bank.title,
-                    clusterCaption: element.office.bank.title
+                    clusterCaption: element.value + 'р ' + element.office.bank.title
                 }
             },{
                 preset: "twirl#blueStretchyIcon"
