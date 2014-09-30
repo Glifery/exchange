@@ -148,7 +148,6 @@
             var elements = storage.getElements(),
                 objects = [];
 
-            console.log('reload with');
             cluster.removeAll();
 
             for (var i in elements) {
@@ -189,7 +188,8 @@
                 switch: '.js-filter-switch',
                 radio: '.js-filter-radio',
                 slider: '.js-filter-slider'
-            };
+            },
+            titleSelector = '.js-map-title';
 
         function changeDirection() {
             var switchVal = $(selector.switch).val(),
@@ -197,19 +197,20 @@
                 direction = radioVal + '_' + switchVal,
                 value = storage.getLimits(direction).optimal;
 
-            console.log('change direction', direction, 'value', value);
             storage
                 .setDirection(direction)
                 .setValue(value)
                 .update(updateLimits);
 
+            regenerateTitle();
         }
 
         function changeValue() {
             var value = $(selector.slider).val();
 
-            console.log('slider', value);
             storage.setValue(value).update();
+
+            regenerateTitle();
         }
 
         function updateLimits(storage) {
@@ -217,8 +218,17 @@
             $(selector.slider).attr('max', storage.getLimits().max);
             $(selector.slider).val(storage.getLimits().optimal);
             $(selector.slider).slider('refresh');
+        }
 
-            console.log('updateLimits');
+        function regenerateTitle() {
+            var switchText = $(selector.switch + ' option:selected').text(),
+                radioVal = $(selector.radio + ' input:radio:checked').val(),
+                value = $(selector.slider).val(),
+                compareVal = storage.getLimits().compare,
+                compareText = (compareVal == 'max') ? 'от' : 'до';
+                titleString = switchText + ' ' + radioVal + ' ' + compareText + ' ' + value + 'р';
+
+            $(titleSelector).text(titleString);
         }
 
         function init() {
@@ -227,8 +237,6 @@
             $(selector.radio).on('change', changeDirection);
 
             $(selector.slider).on('slidestop', changeValue);
-
-//            storage.onReload(updateLimits);
 
             changeDirection();
         }
