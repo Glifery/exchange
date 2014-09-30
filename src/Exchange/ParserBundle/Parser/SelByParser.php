@@ -10,7 +10,7 @@ class SelByParser implements ParserInterface
 {
     const TARGET_URL = 'http://select.by/kurs/';
 
-    const EXPAND_CLASS = 'expand-child';
+    const EXPAND_CLASS = 'tablesorter-childRow';
 
     /** @var array */
     private $currencyMap;
