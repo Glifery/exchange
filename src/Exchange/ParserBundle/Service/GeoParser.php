@@ -24,9 +24,9 @@ class GeoParser
 
     /**
      * @param RawData $rawData
-     * @return GeoPosition|null
-     * @throws \HttpRuntimeException
      * @throws \OutOfRangeException
+     * @throws \Exception
+     * @return GeoPosition|null
      */
     public function findGeoPosition(RawData $rawData)
     {
@@ -48,13 +48,13 @@ class GeoParser
         if (!$geoResponse->isSuccess()) {
             $error = $geoResponse->getErrorMessage();
 
-            throw new \HttpRuntimeException('Error in geocode request: '.$error);
+            throw new \Exception('Error in geocode request: '.$error);
         }
 
         if ($geoResponse->isSuccess() && !$geoResponse->isOkResponse()) {
             $error = $geoResponse->getStatus();
 
-            throw new \HttpRuntimeException('Error in geocode parsing: '.$error);
+            throw new \Exception('Error in geocode parsing: '.$error);
         }
 
         if ($geoResponse->getLongitude() !== null && $geoResponse->getLatitude() !== null) {
