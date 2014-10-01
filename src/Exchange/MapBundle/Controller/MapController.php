@@ -4,10 +4,10 @@ namespace Exchange\MapBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class DefaultController extends Controller
+class MapController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('ExchangeMapBundle:Default:index.html.twig');
+        return $this->render('ExchangeMapBundle:Map:filter.html.twig');
     }
 }

@@ -20,7 +20,7 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('exchange_parser:exchange_rate')
+            ->setName('exchange:parser')
             ->setDescription('Get Exchange Rates')
         ;
     }
@@ -132,7 +132,7 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
         $officeBag->flush();
         $output->writeln('done!');
 
-        $cacheUpdater = $this->getApplication()->find('exchange_cache:update');
+        $cacheUpdater = $this->getApplication()->find('exchange:cache');
         $cacheUpdater->run($input, $output);
 
         $output->writeln('SUCCESSFUL FINISH');

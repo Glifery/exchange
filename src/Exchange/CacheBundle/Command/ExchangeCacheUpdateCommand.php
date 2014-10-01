@@ -12,7 +12,7 @@ class ExchangeCacheUpdateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('exchange_cache:update')
+            ->setName('exchange:cache')
             ->setDescription('Update exchange cache from exchange.js')
         ;
     }
