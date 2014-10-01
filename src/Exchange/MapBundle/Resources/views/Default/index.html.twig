@@ -6,18 +6,18 @@
 
 {% block panel %}
     <p>Настройки валют</p>
-    <select class="js-filter-switch" name="slider" id="flip-a" data-role="slider">
+    <select class="js-filter-switch" name="slider" data-role="slider">
         <option value="H" selected>Купить</option>
         <option value="L">Продать</option>
     </select>
     <fieldset class="js-filter-radio" data-role="controlgroup" data-iconpos="right">
         <legend>Выберите валюту:</legend>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6a" value="USD" checked="checked">
-        <label for="radio-choice-w-6a">USD</label>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6b" value="EUR">
-        <label for="radio-choice-w-6b">EUR</label>
-        <input type="radio" name="radio-choice-w-6" id="radio-choice-w-6c" value="RUB">
-        <label for="radio-choice-w-6c">RUB</label>
+        <input type="radio" name="filter-radio" id="filter-radio-USD" value="USD" checked="checked">
+        <label for="filter-radio-USD">USD</label>
+        <input type="radio" name="filter-radio" id="filter-radio-EUR" value="EUR">
+        <label for="filter-radio-EUR">EUR</label>
+        <input type="radio" name="filter-radio" id="filter-radio-RUB" value="RUB">
+        <label for="filter-radio-RUB">RUB</label>
     </fieldset>
 {% endblock panel %}
 
