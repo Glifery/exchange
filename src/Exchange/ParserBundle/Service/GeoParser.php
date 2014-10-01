@@ -43,6 +43,8 @@ class GeoParser
             'language' => 'ru',
             'region' => 'by'
         );
+
+        sleep(3);
         $geoResponse = $this->geoManager->geocodeAddress($query);
 
         if (!$geoResponse->isSuccess()) {
