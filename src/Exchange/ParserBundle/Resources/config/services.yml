@@ -1,18 +1,28 @@
+imports:
+    - { resource: tut_by.yml }
+
 parameters:
-    exchange_parser.exchange_rate_parser.class: Exchange\ParserBundle\Service\ExchangeRateParser
+    exchange_parser.parser.tut_by.class: Exchange\ParserBundle\Parser\TutByParser
     exchange_parser.parser.sel_by.class: Exchange\ParserBundle\Parser\SelByParser
+    exchange_parser.exchange_rate_parser.class: Exchange\ParserBundle\Service\ExchangeRateParser
     exchange_parser.geo_parser: Exchange\ParserBundle\Service\GeoParser
 
 services:
+    exchange_parser.parser.tut_by:
+        class: %exchange_parser.parser.tut_by.class%
+        arguments:
+            - @service_container
+
     exchange_parser.parser.sel_by:
         class: %exchange_parser.parser.sel_by.class%
-
-    exchange_parser.exchange_rate_parser:
-        class: %exchange_parser.exchange_rate_parser.class%
-        arguments:
-            - @exchange_parser.parser.sel_by
 
     exchange_parser.geo_parser:
         class: %exchange_parser.geo_parser%
         arguments:
             - @umbrellaweb.google_geo_api.manager
+
+    exchange_parser.exchange_rate_parser:
+        class: %exchange_parser.exchange_rate_parser.class%
+        arguments:
+#            - @exchange_parser.parser.sel_by
+            - @exchange_parser.parser.tut_by

@@ -1,0 +1,14 @@
+parameters:
+    tut_by:
+        template:
+            link: http://finance.tut.by/kurs/minsk/#slug#/vse-banki/
+        currency:
+            USD:
+                title: Доллар
+                slug: dollar
+            EUR:
+                title: Евро
+                slug: euro
+            RUB:
+                title: Рубль
+                slug: rubl

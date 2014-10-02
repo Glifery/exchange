@@ -69,6 +69,8 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
             $address = $rawData->getAddress();
             $bankTitle = $rawData->getBank();
             $direction = $rawData->getDirection();
+            $longitude = $rawData->getLongitude();
+            $latitude = $rawData->getLatitude();
 
             $bankCriteria = array('title' => $bankTitle);
             if (!($bank = $bankBag->findEntity($bankCriteria))) {
@@ -92,12 +94,14 @@ class ExchangeRateParseCommand extends ContainerAwareCommand
                 $office->setBank($bank);
                 $office->setAddress($address);
 
-                $office->setLatitude(123);
-                $office->setLongitude(456);
-
-                if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
-                    $office->setLatitude($geoPosition->getLatitude());
-                    $office->setLongitude($geoPosition->getLongitude());
+                if ($longitude && $latitude) {
+                    $office->setLatitude($longitude);
+                    $office->setLongitude($latitude);
+                } else {
+                    if ($geoPosition = $geoParser->findGeoPosition($rawData)) {
+                        $office->setLatitude($geoPosition->getLatitude());
+                        $office->setLongitude($geoPosition->getLongitude());
+                    }
                 }
 
                 $officeBag->addEntity($officeCriteria, $office);
