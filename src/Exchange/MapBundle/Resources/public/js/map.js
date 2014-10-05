@@ -9,6 +9,24 @@
         }
     })();
 
+    var formatModule = (function() {
+        function addFormatMethod() {
+            Number.prototype.currency = function() {
+                if (this < 1000) {
+                    return this + 'р';
+                }
+
+                var separatedValue = (this / 1000).toFixed(3),
+                    separatedString = separatedValue.toString();
+                    formatedValue = separatedString.replace(/,/g, '.');
+
+                return formatedValue + 'р';
+            }
+        }
+
+        addFormatMethod();
+    })();
+
     var storageModule = (function(log) {
         var direction,
             value,
@@ -125,7 +143,8 @@
         function createMap() {
             var map = new ymaps.Map('map', {
                 center: [53.90, 27.53],
-                zoom: 11
+                zoom: 11,
+                controls: ['zoomControl', 'typeSelector',  'fullscreenControl']
             });
 
             map.behaviors.enable('scrollZoom');// Включим масштабирование колесом мыши
@@ -169,12 +188,14 @@
                     balloonContentHeader: element.office.bank.title,
                     balloonContentBody: element.office.address,
                     balloonContentFooter: element.office.title,
-                    iconContent: element.value,
+                    iconContent: element.value.currency(),
+//                    iconContent: '16.110',
                     hintContent: element.office.bank.title,
                     clusterCaption: element.value + 'р ' + element.office.bank.title
                 }
             },{
-                preset: "twirl#blueStretchyIcon"
+//                preset: "twirl#blueStretchyIcon"
+                preset: "islands#blueStretchyIcon"
             });
 
             return object;
@@ -223,10 +244,10 @@
         function regenerateTitle() {
             var switchText = $(selector.switch + ' option:selected').text(),
                 radioVal = $(selector.radio + ' input:radio:checked').val(),
-                value = $(selector.slider).val(),
+                value = ~~($(selector.slider).val()),
                 compareVal = storage.getLimits().compare,
                 compareText = (compareVal == 'max') ? 'от' : 'до';
-                titleString = switchText + ' ' + radioVal + ' ' + compareText + ' ' + value + 'р';
+                titleString = switchText + ' ' + radioVal + ' ' + compareText + ' ' + value.currency();
 
             $(titleSelector).text(titleString);
         }
