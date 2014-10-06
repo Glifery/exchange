@@ -8,5 +8,4 @@ php:
 before_script:
   - composer install -n
   - cp app/config/parameters.yml.dist app/config/parameters.yml
-  - php app/console exchange:parser
   - php app/console exchange:cache
