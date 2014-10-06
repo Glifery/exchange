@@ -180,21 +180,18 @@
         function createObject(element) {
             var object = new ymaps.GeoObject({
                 geometry: {
-                    type: "Point",// тип геометрии - точка
-                    coordinates: [element.office.latitude, element.office.longitude] // координаты точки
+                    type: "Point",
+                    coordinates: [element.office.latitude, element.office.longitude]
                 },
                 properties: {
-                    balloonContent: 'qwert yui',
                     balloonContentHeader: element.office.bank.title,
                     balloonContentBody: element.office.address,
                     balloonContentFooter: element.office.title,
                     iconContent: element.value.currency(),
-//                    iconContent: '16.110',
                     hintContent: element.office.bank.title,
                     clusterCaption: element.value + 'р ' + element.office.bank.title
                 }
             },{
-//                preset: "twirl#blueStretchyIcon"
                 preset: "islands#blueStretchyIcon"
             });
 
