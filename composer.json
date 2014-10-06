@@ -20,10 +20,10 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "symfony/dom-crawler": "2.6.*@dev",
         "umbrella-web/sf2-google-geocoding-api-bundle": "dev-master",
-        "bmatzner/jquery-mobile-bundle": "*",
-        "sensio/generator-bundle": "~2.3"
+        "bmatzner/jquery-mobile-bundle": "*"
     },
     "require-dev": {
+        "sensio/generator-bundle": "~2.3"
     },
     "scripts": {
         "post-root-package-install": [
